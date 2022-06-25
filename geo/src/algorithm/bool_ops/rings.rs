@@ -158,7 +158,9 @@ impl<T: GeoFloat> Rings<T> {
     fn push_link(&mut self, l: Link, pt: SweepPoint<T>, winding: WindingOrder) -> Result<(), ()>{
         if l.to_front {
             self.chains[l.idx].push_front(pt);
-            debug_assert_eq!(self.chains[l.idx].winding, winding.inverse());
+            if self.chains[l.idx].winding != winding.inverse(){
+                return Err(())
+            }
         } else {
             self.chains[l.idx].push_back(pt);
 
