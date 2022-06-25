@@ -159,6 +159,7 @@ impl<T: GeoFloat> Rings<T> {
             debug_assert_eq!(self.chains[l.idx].winding, winding.inverse());
         } else {
             self.chains[l.idx].push_back(pt);
+            debug_assert_eq!(self.chains[l.idx].winding, winding);
         }
     }
 
