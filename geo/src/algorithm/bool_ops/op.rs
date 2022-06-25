@@ -59,7 +59,7 @@ impl<T: Float> Op<T> {
         }
     }
 
-    pub fn sweep(&self) -> Vec<Ring<T>> {
+    pub fn sweep(&self) -> Result<Vec<Ring<T>>, ()> {
         let mut iter = CrossingsIter::from_iter(self.edges.iter());
         let mut rings = Rings::default();
 
@@ -118,7 +118,7 @@ impl<T: Float> Op<T> {
                             } else {
                                 WindingOrder::Clockwise
                             },
-                        )
+                        )?;
                     }
                     next_region = None;
                 }
@@ -176,7 +176,7 @@ impl<T: Float> Op<T> {
             }
         }
 
-        rings.finish()
+        Ok(rings.finish())
     }
 }
 

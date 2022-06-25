@@ -69,7 +69,7 @@ fn check_sweep(wkt1: &str, wkt2: &str, ty: OpType) -> Result<MultiPolygon<f64>> 
     bop.add_multi_polygon(&poly1, true);
     bop.add_multi_polygon(&poly2, false);
 
-    let rings = bop.sweep();
+    let rings = bop.sweep().unwrap();
     info!("Got {n} rings", n = rings.len());
     for ring in rings.iter() {
         info!(

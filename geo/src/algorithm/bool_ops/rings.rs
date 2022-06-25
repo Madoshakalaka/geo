@@ -96,7 +96,7 @@ impl<T: GeoFloat> Rings<T> {
         output
     }
 
-    pub fn add_edge(&mut self, geom: LineOrPoint<T>, winding: WindingOrder) {
+    pub fn add_edge(&mut self, geom: LineOrPoint<T>, winding: WindingOrder) -> Result<(), ()> {
         trace!("Rings.add_edge: {geom:?} {winding:?}");
         let left = geom.left();
         let right = geom.right();
@@ -129,14 +129,14 @@ impl<T: GeoFloat> Rings<T> {
             }
             (None, Some(i)) => {
                 // right matched against of chains[i]
-                self.push_link(i, left, winding.inverse());
+                self.push_link(i, left, winding.inverse())?;
                 self.end_points.remove(&right).unwrap();
                 self.end_points.insert(left, i);
                 trace!("\tadded to {i:?}: {left:?}");
             }
             (Some(i), None) => {
                 // left matched against of chains[i]
-                self.push_link(i, right, winding);
+                self.push_link(i, right, winding)?;
                 self.end_points.remove(&left).unwrap();
                 self.end_points.insert(right, i);
                 trace!("\tadded to {i:?}: {right:?}");
@@ -151,16 +151,22 @@ impl<T: GeoFloat> Rings<T> {
                 trace!("\tconnected chains {i:?} and {j:?}");
             }
         }
+
+        Ok(())
     }
 
-    fn push_link(&mut self, l: Link, pt: SweepPoint<T>, winding: WindingOrder) {
+    fn push_link(&mut self, l: Link, pt: SweepPoint<T>, winding: WindingOrder) -> Result<(), ()>{
         if l.to_front {
             self.chains[l.idx].push_front(pt);
             debug_assert_eq!(self.chains[l.idx].winding, winding.inverse());
         } else {
             self.chains[l.idx].push_back(pt);
-            debug_assert_eq!(self.chains[l.idx].winding, winding);
+
+            if self.chains[l.idx].winding != winding{
+                return Err(())
+            }
         }
+        Ok(())
     }
 
     fn link_chains(&mut self, i: Link, j: Link, winding: WindingOrder) {
