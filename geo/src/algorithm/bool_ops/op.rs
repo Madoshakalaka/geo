@@ -176,7 +176,7 @@ impl<T: Float> Op<T> {
             }
         }
 
-        Ok(rings.finish())
+        rings.finish()
     }
 }
 

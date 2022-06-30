@@ -26,7 +26,7 @@ impl<T: GeoNum> Default for Rings<T> {
     }
 }
 impl<T: GeoFloat> Rings<T> {
-    pub fn finish(mut self) -> Vec<Ring<T>> {
+    pub fn finish(mut self) -> Result<Vec<Ring<T>>, ()> {
         let mut output = vec![];
         let mut curr_chain_idx = self.chains.len();
         trace!("finalizing {n} chains", n = curr_chain_idx);
@@ -79,9 +79,9 @@ impl<T: GeoFloat> Rings<T> {
 
                 self.chains[loop_link.idx].items.clear();
                 loop_link = if loop_link.to_front {
-                    self.chains[loop_link.idx].next_back.unwrap()
+                    self.chains[loop_link.idx].next_back.ok_or(())?
                 } else {
-                    self.chains[loop_link.idx].next_front.unwrap()
+                    self.chains[loop_link.idx].next_front.ok_or(())?
                 };
 
                 if loop_link.idx == curr_chain_idx {
@@ -93,7 +93,7 @@ impl<T: GeoFloat> Rings<T> {
             trace!("\t{ls:?}");
             output.push(Ring::from_coords(ls, &winding));
         }
-        output
+        Ok(output)
     }
 
     pub fn add_edge(&mut self, geom: LineOrPoint<T>, winding: WindingOrder) -> Result<(), ()> {
