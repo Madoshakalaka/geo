@@ -98,7 +98,6 @@ impl<T: PartialOrd + Debug> ActiveSet for BTreeSet<Active<T>> {
     }
 
     fn remove_active(&mut self, segment: &Self::Seg) {
-        let result = self.remove(Active::active_ref(segment));
-        debug_assert!(result);
+        self.remove(Active::active_ref(segment));
     }
 }
