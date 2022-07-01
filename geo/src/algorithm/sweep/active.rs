@@ -87,7 +87,6 @@ impl<T: PartialOrd> ActiveSet for BTreeSet<Active<T>> {
 
     fn insert_active(&mut self, segment: Self::Seg) {
         let result = self.insert(Active(segment));
-        debug_assert!(result);
     }
 
     fn remove_active(&mut self, segment: &Self::Seg) {
